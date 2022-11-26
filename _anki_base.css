@@ -1,0 +1,142 @@
+/* https://chrisk91.me/2017/12/20/Sharing-CSS-across-multiple-cards-in-Anki.html*/
+/* @import url("_anki_base.css"); */
+/* Careful this is used across multiple cards */
+/* See tailwind classes further below */
+
+/* <div class="text-justify m-auto max-w-2xl"> */
+
+.faded-out {
+  opacity: 0;
+  transition: 1s all;
+}
+
+.card {
+  font-family: arial;
+  font-size: 20px;
+  text-align: center;
+  color: black;
+  background-color: white;
+}
+
+.cloze {
+  font-weight: bold;
+  color: blue;
+}
+
+.nightMode .cloze {
+  color: lightblue;
+}
+
+iframe {
+  border: none;
+}
+
+.flip {
+  transform: scaleX(-1)
+}
+
+.shake {
+  display: inline-block;
+  animation: shake 0.5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
+
+.break-out {
+  width: 1200px;
+  position: relative;
+  left: 50%;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+/* Tailwind classes */
+
+.absolute {
+  position: absolute
+}
+
+.relative {
+  position: relative
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.max-w-xs {
+  max-width: 20rem;
+}
+
+.max-w-sm {
+  max-width: 24rem;
+}
+
+.max-w-md {
+  max-width: 28rem;
+}
+
+.max-w-lg {
+  max-width: 32rem;
+}
+
+.max-w-xl {
+  max-width: 36rem;
+}
+
+.max-w-2xl {
+  max-width: 42rem;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
+}

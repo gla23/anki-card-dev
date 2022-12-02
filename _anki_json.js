@@ -11,8 +11,9 @@ function PARSE(strings, ...values) {
 }
 const boxWidth = 65;
 const boxHeight = Math.floor((boxWidth / 21) * 30);
+const sectionMargin = 8;
 
-export function buildBoxes(data, useClass) {
+export function buildBoxes(data, back, visuals) {
   const count = data.length;
   const sections = [];
   const clozeIndex = getClozeIndex();
@@ -23,9 +24,10 @@ export function buildBoxes(data, useClass) {
     const boxClass = boxData.class || "";
     const sectionId = Math.floor((box - 1) / 10);
 
+    // Get 10 box section
     if (!sections[sectionId])
       sections[sectionId] = PARSE`
-        <div class="section" style="display: inline-block;margin-left: 8px;vertical-align: top;">
+        <div class="section" style="display: inline-block;margin-left: ${sectionMargin}px;vertical-align: top;">
           <div class="flex" style="display: flex; width: ${
             boxWidth * 2
           }px; flex-wrap: wrap;">
@@ -33,16 +35,20 @@ export function buildBoxes(data, useClass) {
         </div>
       `;
     const section = sections[sectionId];
-    const boxElement = PARSE`<div class="inner box${box} ${
-      useClass ? boxClass : ""
-    }" style="width: ${boxWidth - 2}px; height: ${
-      boxHeight - 2
-    }px;line-height: ${boxHeight - 2}px;border: #aaa 1px solid;">${
-      box === clozeIndex ? "?" : ""
-    }</div>`;
 
+    // Add this box to section
+    const boxText = box === clozeIndex ? (back ? box : "?") : "";
+    const boxElement = PARSE`<div class="inner box${box} ${
+      back ? boxClass : ""
+    }" style="position: relative; text-align: left; width: ${
+      boxWidth - 2
+    }px; height: ${boxHeight - 2}px;border: #aaa 1px solid;">
+      <div style="text-align: center; line-height: ${
+        boxHeight - 2
+      }px;">${boxText}</div>
+    </div>`;
     section.children[0].appendChild(boxElement);
-    if (box === clozeIndex) clozeBox = boxElement;
+    if (box === clozeIndex) clozeBox = boxElement.firstChild;
   }
   sections.forEach((section) => boxesRoot.appendChild(section));
   return clozeBox;

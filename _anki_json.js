@@ -40,15 +40,60 @@ export function buildBoxes(data, back, visuals) {
     const boxText = box === clozeIndex ? (back ? box : "?") : "";
     const boxElement = PARSE`<div class="inner box${box} ${
       back ? boxClass : ""
-    }" style="position: relative; text-align: left; width: ${
-      boxWidth - 2
-    }px; height: ${boxHeight - 2}px;border: #aaa 1px solid;">
-      <div style="text-align: center; line-height: ${
-        boxHeight - 2
-      }px;">${boxText}</div>
+    }" style="
+      position: relative;
+      text-align: left;
+      width: ${boxWidth - 2}px;
+      height: ${boxHeight - 2}px;
+      border: #aaa 1px solid;
+    ">
+      <div id="hitbox" style="
+        width: 100%;
+        height: 100%;
+        position: absolute;
+      "></div>
+      <div style="
+        text-align: center;
+        line-height: ${boxHeight - 2}px;
+      ">${boxText}</div>
     </div>`;
+    const hitbox = boxElement.children[0];
     section.children[0].appendChild(boxElement);
     if (box === clozeIndex) clozeBox = boxElement.firstChild;
+
+    // Setup up hoverover
+    if (back) {
+      const popupId = "popUp" + box;
+      const popUp = PARSE`<div
+        id="${popupId}"
+        style="
+          position: absolute;
+          background: rgba(80, 80, 80, 0.9);
+          border: #888 solid 1px;
+          color: #eee;
+          width: 600px;
+          z-index: 5;
+          opacity: 0;
+          transition: opacity 0.2s;
+          transform: translate(-50%) translate(${boxWidth / 2}px, ${
+        // (boxHeight * 3) / 7
+        boxHeight
+      }px)
+        "
+        ontransitionend="this.remove()"
+      >
+        <div style="padding: 4px;">${boxData.rhyme}</div>
+        <div style="padding: 4px; font-size:13px; text-align: justify; color: #ccc;">${
+          boxData.comment
+        }</div>
+      </div>`;
+      hitbox.onmouseenter = () => {
+        boxElement.appendChild(popUp);
+        popUp.style.opacity = 1;
+      };
+      hitbox.onmouseleave = (event) =>
+        !event.metaKey && (popUp.style.opacity = 0);
+    }
   }
   sections.forEach((section) => boxesRoot.appendChild(section));
   return clozeBox;

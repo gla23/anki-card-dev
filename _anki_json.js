@@ -5,7 +5,7 @@ import { getClozeIndex } from "./_anki_cloze.js";
 
 const parser = new DOMParser();
 function PARSE(strings, ...values) {
-  const html = strings.map((string, i) => string + (values[i] || "")).join("");
+  const html = strings.map((string, i) => string + (values[i] ?? "")).join("");
   const doc = parser.parseFromString(html, "text/html");
   return doc.getElementsByTagName("body")[0].firstChild;
 }
@@ -21,10 +21,9 @@ export function buildBoxes(data, back, visuals) {
 
   for (let box = 1; box <= count; box++) {
     const boxData = data[box - 1];
-    const boxClass = boxData.class || "";
-    const sectionId = Math.floor((box - 1) / 10);
 
     // Get 10 box section
+    const sectionId = Math.floor((box - 1) / 10);
     if (!sections[sectionId])
       sections[sectionId] = PARSE`
         <div class="section" style="display: inline-block;margin-left: ${sectionMargin}px;vertical-align: top;">
@@ -37,6 +36,7 @@ export function buildBoxes(data, back, visuals) {
     const section = sections[sectionId];
 
     // Add this box to section
+    const boxClass = boxData.class || "";
     const boxText = box === clozeIndex ? (back ? box : "?") : "";
     const boxElement = PARSE`<div class="inner box${box} ${
       back ? boxClass : ""
@@ -51,6 +51,7 @@ export function buildBoxes(data, back, visuals) {
         width: 100%;
         height: 100%;
         position: absolute;
+        z-index: 6;
       "></div>
       <div style="
         text-align: center;
@@ -61,6 +62,24 @@ export function buildBoxes(data, back, visuals) {
     section.children[0].appendChild(boxElement);
     if (box === clozeIndex) clozeBox = boxElement.firstChild;
 
+    // Generate extra graphics
+    if (back) {
+      visuals.genealogies
+        ?.filter((genealogy) => genealogy.chapter === box)
+        .forEach((genealogy) => {
+          const { start = 0, end = 1 } = genealogy;
+          const scale = (end - start) * 1.5;
+          const scroll = PARSE`<img src="scroll.svg" style="
+            position: absolute;
+            padding-left: ${15}%;
+            width: ${70}%;
+            object-fit: fill;
+            transform: translate(0px, ${start * 75 + 8}px) scale(1, ${scale});
+            transform-origin: top left;
+          "/>`;
+          boxElement.appendChild(scroll);
+        });
+    }
     // Setup up hoverover
     if (back) {
       const popupId = "popUp" + box;

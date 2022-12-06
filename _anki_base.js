@@ -17,6 +17,16 @@ console.log("Now loaded _anki_base.js");
 window.randomMajor = randomMajor;
 window.choose = choose;
 window.swapCSSProperty = swapCSSProperty;
+window.$$ = (...args) => Array.from(document.querySelectorAll(...args));
+
+// Hightlights
+import(`./_highlight.min.js?version=${1}`).then((module) => {
+  document.querySelectorAll(".language-js, .language-css").forEach((block) => {
+    hljs.highlightElement(block);
+    block.style.whiteSpace = "pre";
+    block.style.fontFamily = "monospace";
+  });
+});
 
 // Helpers
 export function randomMajor(max = 30) {
@@ -34,7 +44,7 @@ export function swapCSSProperty(selector, property, a, b, changeText = false) {
       : elem.style[property];
     const neww = old === a ? b : a;
     elem.style.setProperty(property, neww);
-    elem.innerHTML = neww;
+    if (changeText) elem.innerHTML = neww;
     console.log(
       `Swapping ${property} to ${neww} (${selector} previously ${old})`
     );

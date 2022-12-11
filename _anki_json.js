@@ -81,31 +81,37 @@ export function buildBoxes(data, back, visuals) {
           boxElement.appendChild(scroll);
         });
     }
-    // Setup up hoverover
+    // Hoverover popup
     if (back) {
       const popupId = "popUp" + box;
       const popUp = PARSE`<div
         id="${popupId}"
         style="
           position: absolute;
-          background: rgba(80, 80, 80, 0.9);
-          border: #888 solid 1px;
-          color: #eee;
-          width: 600px;
           z-index: 5;
           opacity: 0;
+          width: 600px;
+          text-align: center;
           transition: opacity 0.2s;
-          transform: translate(-50%) translate(${boxWidth / 2}px, ${
-        // (boxHeight * 3) / 7
-        boxHeight
-      }px)
+          transform: translate(-50%) translate(${
+            boxWidth / 2
+          }px, ${boxHeight}px)
         "
         ontransitionend="this.remove()"
       >
-        <div style="padding: 4px;">${boxData.rhyme}</div>
-        <div style="padding: 4px; font-size:13px; text-align: justify; color: #ccc;">${
-          boxData.comment
-        }</div>
+        <div style="
+          background: rgba(80, 80, 80, 0.9);
+          border: #888 solid 1px;
+          color: #eee;
+          display: inline-block;
+          text-align: left;
+          transform: translate(0px, ${(-boxHeight * 1) / 7}px);
+        ">
+          <div style="padding: 4px; white-space: nowrap;">${boxData.rhyme}</div>
+          <div style="padding: 4px; width: fit-content; max-width: 800px; font-size: 13px; text-align: justify; color: #ccc;">${
+            boxData.comment
+          }</div>
+        </div>
       </div>`;
       hitbox.onmouseenter = () => {
         boxElement.appendChild(popUp);

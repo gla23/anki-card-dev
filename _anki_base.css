@@ -3,11 +3,19 @@
 /* Careful this is used across multiple cards */
 /* See tailwind classes further below */
 
+/* See also the editor and field CSS in the modifier plugin */
+/* No restart is needed as the plugin page suggests */
+
 /* <div class="text-justify m-auto max-w-2xl"> */
 @import url("_agate.min.css");
+@import url("_tailwind.css");
 /* @import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css"); */
 /* @import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css"); */
 /* @import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/agate.min.css"); */
+
+.back js:not([nohide]) {
+  display: none;
+}
 
 /* Cloze */
 .front .backOnly {
@@ -112,50 +120,4 @@ iframe {
   left: 50%;
   text-align: center;
   transform: translateX(-50%);
-}
-
-/* Tailwind classes */
-
-.absolute {
-  position: absolute
-}
-
-.relative {
-  position: relative
-}
-
-.text-justify {
-  text-align: justify;
-}
-
-.m-auto {
-  margin: auto;
-}
-
-.max-w-xs {
-  max-width: 20rem;
-}
-
-.max-w-sm {
-  max-width: 24rem;
-}
-
-.max-w-md {
-  max-width: 28rem;
-}
-
-.max-w-lg {
-  max-width: 32rem;
-}
-
-.max-w-xl {
-  max-width: 36rem;
-}
-
-.max-w-2xl {
-  max-width: 42rem;
-}
-
-.whitespace-nowrap {
-  white-space: nowrap;
 }

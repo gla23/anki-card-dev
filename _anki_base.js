@@ -18,14 +18,28 @@ window.randomMajor = randomMajor;
 window.choose = choose;
 window.swapCSSProperty = swapCSSProperty;
 window.$$ = (...args) => Array.from(document.querySelectorAll(...args));
+window.$ = document.querySelector.bind(document);
 
 // Hightlights
 import(`./_highlight.min.js?version=${1}`).then((module) => {
-  document.querySelectorAll(".language-js, .language-css").forEach((block) => {
-    hljs.highlightElement(block);
-    block.style.whiteSpace = "pre";
-    block.style.fontFamily = "monospace";
-  });
+  document
+    .querySelectorAll(".language-js, .language-css, .language-lua, js")
+    .forEach((block) => {
+      hljs.highlightElement(block);
+      block.style.whiteSpace = "pre";
+      block.style.fontFamily = "monospace";
+      block.style.fontSize = "18px";
+      block.style.margin = "8px 4px 8px 4px";
+      block.style.padding = "0px 4px 0px 4px";
+      block.style.border = "rgba(128, 128, 128, 0.5) solid 1px";
+      // if (block.style.display !== "none") block.style.display = "inline-block";
+    });
+});
+
+// Run JS elements
+$$("js").forEach((elem) => {
+  const fn = new Function(elem.innerHTML);
+  fn();
 });
 
 // Helpers

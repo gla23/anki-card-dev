@@ -60,11 +60,12 @@ export function buildBoxes(data, back, visuals) {
     </div>`;
     const hitbox = boxElement.children[0];
     section.children[0].appendChild(boxElement);
+    // Keep clozeBox to return at the end
     if (box === clozeIndex) clozeBox = boxElement.firstChild;
 
     // Generate extra graphics
     if (back) {
-      visuals.genealogies
+      visuals?.genealogies
         ?.filter((genealogy) => genealogy.chapter === box)
         .forEach((genealogy) => {
           const { start = 0, end = 1 } = genealogy;

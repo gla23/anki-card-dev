@@ -97,28 +97,34 @@ export function buildBoxes(data, back, visuals) {
             boxWidth / 2
           }px, ${boxHeight}px)
         "
-        ontransitionend="this.remove()"
+        ontransitionend="if (this.style.opacity === 0) this.remove();"
       >
         <div style="
           background: rgba(80, 80, 80, 0.9);
           border: #888 solid 1px;
           color: #eee;
+          border-radius: 5px;
           display: inline-block;
           text-align: left;
           transform: translate(0px, ${(-boxHeight * 1) / 7}px);
         ">
-          <div style="padding: 4px; white-space: nowrap;">${boxData.rhyme}</div>
-          <div style="padding: 4px; width: fit-content; max-width: 800px; font-size: 13px; text-align: justify; color: #ccc;">${
-            boxData.comment
-          }</div>
+          <div style="margin: 8px; white-space: nowrap;">${boxData.rhyme}</div>
+          <div style="margin: ${
+            boxData.comment ? 8 : 0
+          }px; width: fit-content; max-width: 800px; font-size: 13px; text-align: justify; color: #ccc;">${
+        boxData.comment
+      }</div>
         </div>
       </div>`;
+      let hoverTimeout;
       hitbox.onmouseenter = () => {
         boxElement.appendChild(popUp);
-        popUp.style.opacity = 1;
+        hoverTimeout = setTimeout(() => (popUp.style.opacity = 1), 300);
       };
-      hitbox.onmouseleave = (event) =>
-        !event.metaKey && (popUp.style.opacity = 0);
+      hitbox.onmouseleave = (event) => {
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        if (!event.metaKey) popUp.style.opacity = 0;
+      };
     }
   }
   sections.forEach((section) => boxesRoot.appendChild(section));

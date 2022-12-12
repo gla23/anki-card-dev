@@ -97,7 +97,7 @@ export function buildBoxes(data, back, visuals) {
             boxWidth / 2
           }px, ${boxHeight}px)
         "
-        ontransitionend="if (this.style.opacity === 0) this.remove();"
+        ontransitionend="if (this.style.opacity == 0) this.remove();"
       >
         <div style="
           background: rgba(80, 80, 80, 0.9);
@@ -119,10 +119,11 @@ export function buildBoxes(data, back, visuals) {
       let hoverTimeout;
       hitbox.onmouseenter = () => {
         boxElement.appendChild(popUp);
-        hoverTimeout = setTimeout(() => (popUp.style.opacity = 1), 300);
+        hoverTimeout = setTimeout(() => (popUp.style.opacity = 1), 150);
       };
       hitbox.onmouseleave = (event) => {
         if (hoverTimeout) clearTimeout(hoverTimeout);
+        if (popUp.style.opacity == 0) popUp.remove();
         if (!event.metaKey) popUp.style.opacity = 0;
       };
     }

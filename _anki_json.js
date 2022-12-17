@@ -56,6 +56,8 @@ export function buildBoxes(data, back, visuals) {
       <div style="
         text-align: center;
         line-height: ${boxHeight - 2}px;
+        position: absolute;
+        width: 100%;
       ">${boxText}</div>
     </div>`;
     const hitbox = boxElement.children[0];

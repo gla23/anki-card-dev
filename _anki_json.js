@@ -51,13 +51,14 @@ export function buildBoxes(data, back, visuals) {
         width: 100%;
         height: 100%;
         position: absolute;
-        z-index: 6;
+        z-index: 15;
       "></div>
       <div style="
         text-align: center;
         line-height: ${boxHeight - 2}px;
         position: absolute;
         width: 100%;
+        z-index: 5;
       ">${boxText}</div>
     </div>`;
     const hitbox = boxElement.children[0];
@@ -65,32 +66,15 @@ export function buildBoxes(data, back, visuals) {
     // Keep clozeBox to return at the end
     if (box === clozeIndex) clozeBox = boxElement.firstChild;
 
-    // Generate extra graphics
-    if (back) {
-      visuals?.genealogies
-        ?.filter((genealogy) => genealogy.chapter === box)
-        .forEach((genealogy) => {
-          const { start = 0, end = 1 } = genealogy;
-          const scale = (end - start) * 1.5;
-          const scroll = PARSE`<img src="scroll.svg" style="
-            position: absolute;
-            padding-left: ${15}%;
-            width: ${70}%;
-            object-fit: fill;
-            transform: translate(0px, ${start * 75 + 8}px) scale(1, ${scale});
-            transform-origin: top left;
-          "/>`;
-          boxElement.appendChild(scroll);
-        });
-    }
+    if (!back) continue;
     // Hoverover popup
-    if (back) {
-      const popupId = "popUp" + box;
-      const popUp = PARSE`<div
+
+    const popupId = "popUp" + box;
+    const popUp = PARSE`<div
         id="${popupId}"
         style="
           position: absolute;
-          z-index: 5;
+          z-index: 10;
           opacity: 0;
           width: 600px;
           text-align: center;
@@ -114,21 +98,44 @@ export function buildBoxes(data, back, visuals) {
           <div style="margin: ${
             boxData.comment ? 8 : 0
           }px; width: fit-content; max-width: 800px; font-size: 13px; text-align: justify; color: #ccc;">${
-        boxData.comment
-      }</div>
+      boxData.comment
+    }</div>
         </div>
       </div>`;
-      let hoverTimeout;
-      hitbox.onmouseenter = () => {
-        boxElement.appendChild(popUp);
-        hoverTimeout = setTimeout(() => (popUp.style.opacity = 1), 150);
-      };
-      hitbox.onmouseleave = (event) => {
-        if (hoverTimeout) clearTimeout(hoverTimeout);
-        if (popUp.style.opacity == 0) popUp.remove();
-        if (!event.metaKey) popUp.style.opacity = 0;
-      };
-    }
+    let hoverTimeout;
+    hitbox.onmouseenter = () => {
+      boxElement.appendChild(popUp);
+      hoverTimeout = setTimeout(() => (popUp.style.opacity = 1), 150);
+    };
+    hitbox.onmouseleave = (event) => {
+      if (hoverTimeout) clearTimeout(hoverTimeout);
+      if (popUp.style.opacity == 0) popUp.remove();
+      if (!event.metaKey) popUp.style.opacity = 0;
+    };
+
+    // Groupings
+    const { groupings = [] } = visuals;
+    groupings.forEach((grouping) => {
+      if (box < grouping.start || box > grouping.end) return;
+      // boxElement.style.border = `dashed 1px ${grouping.class}`;
+    });
+
+    // Generate extra graphics
+    visuals?.genealogies
+      ?.filter((genealogy) => genealogy.chapter === box)
+      .forEach((genealogy) => {
+        const { start = 0, end = 1 } = genealogy;
+        const scale = (end - start) * 1.5;
+        const scroll = PARSE`<img src="scroll.svg" style="
+            position: absolute;
+            padding-left: ${15}%;
+            width: ${70}%;
+            object-fit: fill;
+            transform: translate(0px, ${start * 75 + 8}px) scale(1, ${scale});
+            transform-origin: top left;
+          "/>`;
+        boxElement.appendChild(scroll);
+      });
   }
   sections.forEach((section) => boxesRoot.appendChild(section));
   return clozeBox;

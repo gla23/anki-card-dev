@@ -21,9 +21,25 @@ window.$$ = (...args) => Array.from(document.querySelectorAll(...args));
 window.$ = document.querySelector.bind(document);
 
 // Hightlights
+const languages = [
+  "js",
+  "ts",
+  "css",
+  "lua",
+  "sql",
+  "json",
+  "python",
+  "bash",
+  "html",
+];
 import(`./_highlight.min.js?version=${1}`).then((module) => {
   document
-    .querySelectorAll(".language-js, .language-css, .language-lua, js")
+    .querySelectorAll(
+      languages
+        .map((language) => `.language-${language}`)
+        .concat(["js"])
+        .join(", ")
+    )
     .forEach((block) => {
       hljs.highlightElement(block);
       block.style.whiteSpace = "pre";

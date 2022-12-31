@@ -1,4 +1,5 @@
 import { getClozeIndex } from "./_anki_cloze.js";
+import { boxXY, inAGroup } from "./_box_map.js";
 // Add these two elements to import field with name "json"
 // <div id="jsonData" style="display: none">{{json}}</div>
 // <div id='errorRoot' style="color: tomato;"></div>
@@ -13,7 +14,7 @@ const boxWidth = 65;
 const boxHeight = Math.floor((boxWidth / 21) * 30);
 const sectionMargin = 8;
 
-export function buildBoxes(data, back, visuals) {
+export function buildBoxes(data, back, visuals = {}) {
   const count = data.length;
   const sections = [];
   const clozeIndex = getClozeIndex();
@@ -46,6 +47,7 @@ export function buildBoxes(data, back, visuals) {
       width: ${boxWidth - 2}px;
       height: ${boxHeight - 2}px;
       border: #aaa 1px solid;
+      box-sizing: border-box;
     ">
       <div id="hitbox" style="
         width: 100%;
@@ -117,7 +119,22 @@ export function buildBoxes(data, back, visuals) {
     const { groupings = [] } = visuals;
     groupings.forEach((grouping) => {
       if (box < grouping.start || box > grouping.end) return;
-      // boxElement.style.border = `dashed 1px ${grouping.class}`;
+      if (clozeIndex < grouping.start || clozeIndex > grouping.end) return;
+      const inGroup = inAGroup(grouping);
+      const { x, y } = boxXY(box);
+      const sides = [
+        inGroup(x, y - 1),
+        inGroup(x + 1, y),
+        inGroup(x, y + 1),
+        inGroup(x - 1, y),
+      ];
+      boxElement.style.borderColor = sides
+        .map((side) => (side ? "#777" : grouping.colour))
+        .join(" ");
+      boxElement.style.borderWidth = sides
+        .map((side) => (side ? "1px" : "3px"))
+        .join(" ");
+      boxElement.style.borderStyle = "solid";
     });
 
     // Generate extra graphics

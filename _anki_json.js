@@ -120,6 +120,24 @@ export function buildBoxes(data, back, visuals = {}) {
     groupings.forEach((grouping) => {
       if (box < grouping.start || box > grouping.end) return;
       if (clozeIndex < grouping.start || clozeIndex > grouping.end) return;
+      // Label
+      const labelBox = grouping.labelBox || grouping.start;
+      const labelSide = grouping.labelSide || "top";
+      if (box === labelBox) {
+        const title = PARSE`<span style="
+          font-size: 14px;
+          padding: 4px;
+          width: ${boxWidth * 2}px;
+          position: absolute;
+          ${labelSide}: 0px;
+          color: ${grouping.colour};
+          z-index: 5;
+        ">
+          ${grouping.labelText}
+        </span>`;
+        boxElement.appendChild(title);
+      }
+      // Borders
       const inGroup = inAGroup(grouping);
       const { x, y } = boxXY(box);
       const sides = [
@@ -128,13 +146,26 @@ export function buildBoxes(data, back, visuals = {}) {
         inGroup(x, y + 1),
         inGroup(x - 1, y),
       ];
+      const sideName = ["Top", "Right", "Bottom", "Left"];
       boxElement.style.borderColor = sides
-        .map((side) => (side ? "#777" : grouping.colour))
+        .map((side, i) => {
+          if (!side) return grouping.colour;
+          const previousColor = boxElement.style[`border${sideName[i]}Color`];
+          if (previousColor !== "rgb(170, 170, 170)") return previousColor;
+          return "#777";
+        })
         .join(" ");
       boxElement.style.borderWidth = sides
-        .map((side) => (side ? "1px" : "3px"))
+        .map((side, i) => {
+          const previousWidth = boxElement.style[`border${sideName[i]}Width`];
+          console.log(side, previousWidth, previousWidth !== "1px");
+          if (previousWidth !== "1px") return previousWidth;
+          return side ? "1px" : "3px";
+        })
         .join(" ");
-      boxElement.style.borderStyle = "solid";
+      boxElement.style.borderRadius = sides
+        .map((side, i) => (side || sides[(i + 3) % 4] ? "0px" : "8px"))
+        .join(" ");
     });
 
     // Generate extra graphics

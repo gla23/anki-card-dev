@@ -1,5 +1,5 @@
 import { getClozeIndex } from "./_anki_cloze.js";
-import { boxXY, inAGroup } from "./_box_map.js";
+import { boxXY, inAGrouping } from "./_box_map.js";
 // Add these two elements to import field with name "json"
 // <div id="jsonData" style="display: none">{{json}}</div>
 // <div id='errorRoot' style="color: tomato;"></div>
@@ -61,6 +61,7 @@ export function buildBoxes(data, back, visuals = {}) {
         position: absolute;
         width: 100%;
         z-index: 5;
+        text-shadow: 0px 0px 2px rgb(47,47,49), 0px 0px 2px rgb(47,47,49);
       ">${boxText}</div>
     </div>`;
     const hitbox = boxElement.children[0];
@@ -118,28 +119,44 @@ export function buildBoxes(data, back, visuals = {}) {
     // Groupings
     const { groupings = [] } = visuals;
     groupings.forEach((grouping) => {
-      if (box < grouping.start || box > grouping.end) return;
-      if (clozeIndex < grouping.start || clozeIndex > grouping.end) return;
-      // Label
-      const labelBox = grouping.labelBox || grouping.start;
-      const labelSide = grouping.labelSide || "top";
-      if (box === labelBox) {
+      const { colour = "white", blocks = [], labels = [] } = grouping;
+      const clozeInGrouping = blocks.some(
+        (block) => clozeIndex >= block.start && clozeIndex <= block.end
+      );
+      const renderingInGrouping = blocks.some(
+        (block) => box >= block.start && box <= block.end
+      );
+      if (!clozeInGrouping) return;
+      // Labels
+      labels.forEach((label, i) => {
+        const {
+          box: labelBox = blocks[i]?.start ?? 1,
+          side = "top",
+          text = "Missing text",
+          sideValue = "0px",
+        } = label;
+        if (box !== labelBox) return;
         const title = PARSE`<span style="
-          font-size: 14px;
-          padding: 4px;
-          width: ${boxWidth * 2}px;
-          position: absolute;
-          ${labelSide}: 0px;
-          color: ${grouping.colour};
-          z-index: 5;
-        ">
-          ${grouping.labelText}
-        </span>`;
+            font-size: 14px;
+            padding: 4px;
+            width: ${boxWidth * 2}px;
+            position: absolute;
+            ${side}: ${sideValue};
+            color: ${colour};
+            z-index: 5;
+            // text-shadow: 2px 0 rgb(47,47,49), -2px 0 rgb(47,47,49), 0 2px rgb(47,47,49), 0 -2px rgb(47,47,49),
+             1px 1px rgb(47,47,49), -1px -1px rgb(47,47,49), 1px -1px rgb(47,47,49), -1px 1px rgb(47,47,49);
+             text-shadow: 0px 0px 2px rgb(47,47,49);
+          ">
+            ${text}
+          </span>`;
         boxElement.appendChild(title);
-      }
+      });
+      if (!renderingInGrouping) return;
+
       // Borders
-      const inGroup = inAGroup(grouping);
-      const { x, y } = boxXY(box);
+      const inGroup = inAGrouping(grouping);
+      const { x, y } = boxXY(box, 100, 2);
       const sides = [
         inGroup(x, y - 1),
         inGroup(x + 1, y),
@@ -149,7 +166,7 @@ export function buildBoxes(data, back, visuals = {}) {
       const sideName = ["Top", "Right", "Bottom", "Left"];
       boxElement.style.borderColor = sides
         .map((side, i) => {
-          if (!side) return grouping.colour;
+          if (!side) return colour;
           const previousColor = boxElement.style[`border${sideName[i]}Color`];
           if (previousColor !== "rgb(170, 170, 170)") return previousColor;
           return "#777";
@@ -158,7 +175,6 @@ export function buildBoxes(data, back, visuals = {}) {
       boxElement.style.borderWidth = sides
         .map((side, i) => {
           const previousWidth = boxElement.style[`border${sideName[i]}Width`];
-          console.log(side, previousWidth, previousWidth !== "1px");
           if (previousWidth !== "1px") return previousWidth;
           return side ? "1px" : "3px";
         })

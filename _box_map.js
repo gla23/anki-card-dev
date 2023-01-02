@@ -6,10 +6,11 @@ export const boxXY = (i, h = 5, w = 2) => ({
   y: Math.ceil((((i - 1) % (w * h)) + 1) / w) - 1,
 });
 
-export const inAGroup =
-  (group) =>
-  (x, y, h = 5, w = 2) => {
-    const { start, end } = group;
-    const block = boxOf(x, y, h, w);
-    return block >= start && block <= end;
+export const inAGrouping =
+  (grouping) =>
+  (x, y, h = 500, w = 2) => {
+    const box = boxOf(x, y, h, w);
+    return grouping.blocks.some(
+      (block) => box >= block.start && box <= block.end
+    );
   };

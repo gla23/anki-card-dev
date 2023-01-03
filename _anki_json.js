@@ -14,11 +14,15 @@ const boxWidth = 65;
 const boxHeight = Math.floor((boxWidth / 21) * 30);
 const sectionMargin = 8;
 
-export function buildBoxes(data, back, visuals = {}) {
+export function buildBoxes(
+  data,
+  back,
+  visuals = {},
+  viewingIndex = getClozeIndex()
+) {
   const count = data.length;
   const sections = [];
-  const clozeIndex = getClozeIndex();
-  let clozeBox = null;
+  let viewingBox = null;
 
   for (let box = 1; box <= count; box++) {
     const boxData = data[box - 1];
@@ -38,7 +42,7 @@ export function buildBoxes(data, back, visuals = {}) {
 
     // Add this box to section
     const boxClass = boxData.class || "";
-    const boxText = box === clozeIndex ? (back ? box : "?") : "";
+    const boxText = box === viewingIndex ? (back ? box : "?") : "";
     const boxElement = PARSE`<div class="inner box${box} ${
       back ? boxClass : ""
     }" style="
@@ -54,6 +58,7 @@ export function buildBoxes(data, back, visuals = {}) {
         height: 100%;
         position: absolute;
         z-index: 15;
+        cursor: pointer;
       "></div>
       <div style="
         text-align: center;
@@ -66,12 +71,12 @@ export function buildBoxes(data, back, visuals = {}) {
     </div>`;
     const hitbox = boxElement.children[0];
     section.children[0].appendChild(boxElement);
-    // Keep clozeBox to return at the end
-    if (box === clozeIndex) clozeBox = boxElement.firstChild;
+    // Keep viewingBox to return at the end
+    if (box === viewingIndex) viewingBox = boxElement.firstChild;
 
     if (!back) continue;
-    // Hoverover popup
 
+    // Hoverover popup
     const popupId = "popUp" + box;
     const popUp = PARSE`<div
         id="${popupId}"
@@ -105,28 +110,32 @@ export function buildBoxes(data, back, visuals = {}) {
     }</div>
         </div>
       </div>`;
+    const tts = 400;
     let hoverTimeout;
     hitbox.onmouseenter = () => {
       boxElement.appendChild(popUp);
-      hoverTimeout = setTimeout(() => (popUp.style.opacity = 1), 150);
+      hoverTimeout = setTimeout(() => (popUp.style.opacity = 1), tts);
     };
-    hitbox.onmouseleave = (event) => {
+    const removePopup = (event) => {
       if (hoverTimeout) clearTimeout(hoverTimeout);
       if (popUp.style.opacity == 0) popUp.remove();
       if (!event.metaKey) popUp.style.opacity = 0;
     };
-
+    hitbox.onmouseleave = removePopup;
+    hitbox.onclick = (event) => {
+      buildBoxes(data, back, visuals, box);
+    };
     // Groupings
     const { groupings = [] } = visuals;
     groupings.forEach((grouping) => {
       const { colour = "white", blocks = [], labels = [] } = grouping;
-      const clozeInGrouping = blocks.some(
-        (block) => clozeIndex >= block.start && clozeIndex <= block.end
+      const viewingBoxInGrouping = blocks.some(
+        (block) => viewingIndex >= block.start && viewingIndex <= block.end
       );
       const renderingInGrouping = blocks.some(
         (block) => box >= block.start && box <= block.end
       );
-      if (!clozeInGrouping) return;
+      if (!viewingBoxInGrouping) return;
       // Labels
       labels.forEach((label, i) => {
         const {
@@ -201,8 +210,13 @@ export function buildBoxes(data, back, visuals = {}) {
         boxElement.appendChild(scroll);
       });
   }
+  while (boxesRoot.firstChild) boxesRoot.firstChild.remove();
   sections.forEach((section) => boxesRoot.appendChild(section));
-  return clozeBox;
+  const design = data[viewingIndex - 1];
+  rhymeRoot.innerHTML = design.rhyme || "";
+  commentRoot.innerHTML = design.comment || "";
+
+  return viewingBox;
 }
 export function getJSON() {
   // Get the json

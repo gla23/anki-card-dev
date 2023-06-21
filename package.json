@@ -1,0 +1,22 @@
+{
+  "name": "anki-card-dev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "_anki_base.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gla23/anki-card-dev.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gla23/anki-card-dev/issues"
+  },
+  "homepage": "https://github.com/gla23/anki-card-dev#readme",
+  "dependencies": {
+    "xterm": "^5.1.0"
+  }
+}

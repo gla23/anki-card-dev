@@ -4,7 +4,7 @@
 /* See tailwind classes further below */
 
 /* See also the editor and field CSS in the modifier plugin */
-/* /Users/gandersen/Library/Application Support/Anki2/addons21/181103283/user_files */
+/* code '/Users/gandersen/Library/Application Support/Anki2/addons21/181103283/user_files' */
 /* No restart is needed as the plugin page suggests */
 
 /* <div class="text-justify m-auto max-w-2xl"> */
@@ -13,6 +13,21 @@
 /* @import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css"); */
 /* @import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css"); */
 /* @import url("https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/agate.min.css"); */
+
+pre[class^="language-"] {
+  display: inline-block
+}
+
+button {
+  border-radius: 5px;
+  margin: 0px;
+}
+
+.box {
+  white-space: pre-wrap;
+  font-family: monospace;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+}
 
 .back js:not([nohide]) {
   display: none;
@@ -118,6 +133,7 @@ iframe {
 .break-out {
   width: 1200px;
   position: relative;
+  display: block;
   left: 50%;
   text-align: center;
   transform: translateX(-50%);

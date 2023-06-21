@@ -52,3 +52,8 @@
 .whitespace-nowrap {
   white-space: nowrap;
 }
+
+
+.font-monospace {
+  font-family: monospace;
+}

@@ -31,7 +31,16 @@ const languages = [
   "python",
   "bash",
   "html",
+  "php",
+  // Updates here should also go in: code '/Users/gandersen/Library/Application Support/Anki2/addons21/181103283/user_files'
 ];
+
+const term = document.getElementById("terminal");
+if (term)
+  import(`./_terminal.js?version=${Date.now()}`).then((module) => {
+    console.log(module);
+  });
+
 import(`./_highlight.min.js?version=${1}`).then((module) => {
   document
     .querySelectorAll(
@@ -72,9 +81,11 @@ export function swapCSSProperty(selector, property, a, b, changeText = false) {
     const old = property.startsWith("--")
       ? style.getPropertyValue(property)
       : elem.style[property];
+    console.log(old === a, old, a, b);
     const neww = old === a ? b : a;
     elem.style.setProperty(property, neww);
     if (changeText) elem.innerHTML = neww;
+    if (typeof currentValue !== "undefined") currentValue.innerHTML = neww;
     console.log(
       `Swapping ${property} to ${neww} (${selector} previously ${old})`
     );

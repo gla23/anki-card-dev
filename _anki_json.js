@@ -58,7 +58,7 @@ export function buildBoxes(
         height: 100%;
         position: absolute;
         z-index: 15;
-        cursor: pointer;
+        ${back ? "cursor: pointer;" : ""}
       "></div>
       <div style="
         text-align: center;

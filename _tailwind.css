@@ -20,6 +20,15 @@
   text-align: left;
 }
 
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 0.5rem !important;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
 
 .m-auto {
   margin: auto;

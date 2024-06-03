@@ -1,16 +1,12 @@
-// `anki` command opens this folder in VSCode
+// `anki` HS command opens this folder in VSCode
 // The Tailwind classes are in @import url("_anki_base.css");
+import { HTML } from "./_HTML.js";
 
 console.log("Now loaded _anki_base.js");
 
 // Usage when building cards:
 // <script type="module">
 // var { choose, swapCSSProperty, randomMajor } = await import(`/_anki_base.js?version=${Date.now()}`);
-// </script>
-
-// Usage for availability within cards fields where Anki removes scripts
-// <script type="module">
-// await import(`/_anki_base.js?version=${Date.now()}`);
 // </script>
 
 // Register helpers on the window for use in cards
@@ -20,7 +16,7 @@ window.swapCSSProperty = swapCSSProperty;
 window.$$ = (...args) => Array.from(document.querySelectorAll(...args));
 window.$ = document.querySelector.bind(document);
 
-// Hightlights
+// Syntax hightlighting
 const languages = [
   "js",
   "ts",
@@ -97,3 +93,32 @@ document.querySelectorAll(".simpleDivisor").forEach((elem) => {
   const chosen = choose([2, 4, 8, 16, 5, 25, 3, 6, 9, 12, 24, 18, 36]);
   elem.innerHTML = chosen;
 });
+
+// Add relevant tags to the bottom of all cards
+const back = $(".back");
+let tagDiv = $(".tagDiv");
+if (tagDiv) {
+  tagDiv.remove();
+  tagDiv = null;
+}
+if (!tagDiv && back) {
+  const tags = $(".tags")
+    .innerText.split(" ")
+    .filter((tag) => tag.endsWith("course"));
+  const elem = HTML`<span class="tagDiv" style="
+    position: fixed;
+    bottom: 20px;
+    text-align: left;
+    display: inline-block;
+    color: rgba(128, 128, 128);
+    font-size: 16px;
+    transform: translate(-50%)
+  ">${tags.map(
+    (tag) => `<span style="
+      border: rgba(128, 128, 128, 0.5) 1px solid;
+      padding: 4px 8px;
+      border-radius: 4px;
+    ">${tag}</span>`
+  )}</span>`;
+  back.appendChild(elem);
+}

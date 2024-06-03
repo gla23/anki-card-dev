@@ -1,15 +1,11 @@
 import { getClozeIndex } from "./_anki_cloze.js";
 import { boxXY, inAGrouping } from "./_box_map.js";
+import { HTML } from "./_HTML.js";
+
 // Add these two elements to import field with name "json"
 // <div id="jsonData" style="display: none">{{json}}</div>
 // <div id='errorRoot' style="color: tomato;"></div>
 
-const parser = new DOMParser();
-function PARSE(strings, ...values) {
-  const html = strings.map((string, i) => string + (values[i] ?? "")).join("");
-  const doc = parser.parseFromString(html, "text/html");
-  return doc.getElementsByTagName("body")[0].firstChild;
-}
 const boxWidth = 65;
 const boxHeight = Math.floor((boxWidth / 21) * 30);
 const sectionMargin = 8;
@@ -30,7 +26,7 @@ export function buildBoxes(
     // Get 10 box section
     const sectionId = Math.floor((box - 1) / 10);
     if (!sections[sectionId])
-      sections[sectionId] = PARSE`
+      sections[sectionId] = HTML`
         <div class="section" style="display: inline-block;margin-left: ${sectionMargin}px;vertical-align: top;">
           <div class="flex" style="display: flex; width: ${
             boxWidth * 2
@@ -43,7 +39,7 @@ export function buildBoxes(
     // Add this box to section
     const boxClass = boxData.class || "";
     const boxText = box === viewingIndex ? (back ? box : "?") : "";
-    const boxElement = PARSE`<div class="inner box${box} ${
+    const boxElement = HTML`<div class="inner box${box} ${
       back ? boxClass : ""
     }" style="
       position: relative;
@@ -78,7 +74,7 @@ export function buildBoxes(
 
     // Hoverover popup
     const popupId = "popUp" + box;
-    const popUp = PARSE`<div
+    const popUp = HTML`<div
         id="${popupId}"
         style="
           position: absolute;
@@ -145,7 +141,7 @@ export function buildBoxes(
           sideValue = "0px",
         } = label;
         if (box !== labelBox) return;
-        const title = PARSE`<span style="
+        const title = HTML`<span style="
             font-size: 14px;
             padding: 4px;
             width: ${boxWidth * 2}px;
@@ -199,7 +195,7 @@ export function buildBoxes(
       .forEach((genealogy) => {
         const { start = 0, end = 1 } = genealogy;
         const scale = (end - start) * 1.5;
-        const scroll = PARSE`<img src="scroll.svg" style="
+        const scroll = HTML`<img src="scroll.svg" style="
             position: absolute;
             padding-left: ${15}%;
             width: ${70}%;

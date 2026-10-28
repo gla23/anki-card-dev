@@ -1,0 +1,28 @@
+.language-bash{
+
+}
+
+.nightMode .language-bash{
+
+}
+
+.text-sm{
+font-size: 0.875rem; /* 14px */
+line-height: 1.25rem; /* 20px */
+}
+
+.nightMode .text-sm{
+font-size: 0.875rem; /* 14px */
+line-height: 1.25rem; /* 20px */
+}
+
+.text-xs{
+font-size: 0.75rem; /* 12px */
+line-height: 1rem; /* 16px */
+}
+
+.nightMode .text-xs{
+font-size: 0.75rem; /* 12px */
+line-height: 1rem; /* 16px */
+}
+

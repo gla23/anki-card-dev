@@ -49,7 +49,7 @@ import(`./_highlight.min.js?version=${1}`).then((module) => {
       hljs.highlightElement(block);
       block.style.whiteSpace = "pre";
       block.style.fontFamily = "monospace";
-      block.style.fontSize = "18px";
+      block.style.fontSize = "0.9em";
       block.style.margin = "8px 4px 8px 4px";
       block.style.padding = "0px 4px 0px 4px";
       block.style.border = "rgba(128, 128, 128, 0.5) solid 1px";
@@ -101,7 +101,9 @@ if (tagDiv) {
   tagDiv.remove();
   tagDiv = null;
 }
+console.log(tagDiv, back);
 if (!tagDiv && back) {
+  console.log("Adding tags");
   const tags = $(".tags")
     .innerText.split(" ")
     .filter((tag) => tag.endsWith("course"));
